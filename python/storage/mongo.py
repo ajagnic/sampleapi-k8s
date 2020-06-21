@@ -18,7 +18,8 @@ class MongoDB:
         self.client.close()
     
     def insert(self, table_name, records_list):
-        return self.db[table_name].insert_many(records_list)
+        update = self.db[table_name].insert_many(records_list)
+        return update.inserted_ids
 
     def get(self, table_name, query_dict):
         records = []
@@ -27,9 +28,9 @@ class MongoDB:
         return records
 
     def update(self, table_name, query_dict, new_record):
-        result = self.db[table_name].update_one(query_dict, {'$set': new_record})
-        return result.raw_result
+        update = self.db[table_name].update_one(query_dict, {'$set': new_record})
+        return update.raw_result
 
     def delete(self, table_name, query_dict):
-        result = self.db[table_name].delete_many(query_dict)
-        return result.raw_result
+        delete = self.db[table_name].delete_many(query_dict)
+        return delete.raw_result

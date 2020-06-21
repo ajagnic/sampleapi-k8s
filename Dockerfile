@@ -8,4 +8,6 @@ WORKDIR /app
 
 COPY ./python/ .
 
-CMD ["python", "app.py"]
+EXPOSE 5001
+
+CMD ["python", "app.py", "mongodb://admin:admin@db:27017"]
