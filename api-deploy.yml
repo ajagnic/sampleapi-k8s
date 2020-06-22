@@ -4,13 +4,16 @@ metadata:
   name: api
   labels:
     app: api
+    tier: frontend
 spec:
   type: NodePort
   ports:
     - name: api-svc-port
+      port: 80
       targetPort: api-ctr-port
   selector:
     app: api
+    tier: frontend
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -18,14 +21,20 @@ metadata:
   name: api-deploy
   labels:
     app: api
+    tier: frontend
 spec:
   selector:
     matchLabels:
       app: api
+      tier: frontend
+  strategy:
+    type: RollingUpdate
+  replicas: 1
   template:
     metadata:
       labels:
         app: api
+        tier: frontend
     spec:
       containers:
         - name: api-ctr
@@ -37,6 +46,3 @@ spec:
           ports:
             - name: api-ctr-port
               containerPort: 5001
-  strategy:
-    type: RollingUpdate
-  replicas: 1

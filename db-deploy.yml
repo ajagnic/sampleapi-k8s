@@ -1,0 +1,60 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: db
+  labels:
+    app: api
+    tier: backend
+spec:
+  ports:
+    - name: db-svc-port
+      port: 27017
+  selector:
+    app: api
+    tier: backend
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: db-deploy
+  labels:
+    app: api
+    tier: backend
+spec:
+  selector:
+    matchLabels:
+      app: api
+      tier: backend
+  strategy:
+    type: Recreate
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: api
+        tier: backend
+    spec:
+      containers:
+        - name: mongo-ctr
+          image: mongo:3.6-xenial
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: MONGO_INITDB_ROOT_USERNAME
+              value: admin
+            - name: MONGO_INITDB_ROOT_PASSWORD
+              value: admin
+          ports:
+            - name: mongo-ctr-port
+              containerPort: 27017
+          volumeMounts:
+            - name: mongo-db
+              mountPath: /data/db
+            - name: mongo-config
+              mountPath: /data/configdb
+      volumes:
+        - name: mongo-db
+          persistentVolumeClaim:
+            claimName: mongo-db-pvc
+        - name: mongo-config
+          persistentVolumeClaim:
+            claimName: mongo-db-pvc
