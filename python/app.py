@@ -1,3 +1,4 @@
+import os
 import sys
 import json
 from time import time
@@ -5,7 +6,6 @@ from time import time
 from flask import Flask, request
 
 from storage.mongo import MongoDB
-from storage.dummy_data import insert_dummy_data
 
 app = Flask(__name__)
 client = MongoDB()
@@ -15,14 +15,14 @@ client = MongoDB()
 def get(table):
     query = dict(request.args)
     records = client.get(table, query)
-    return json.dumps(records)
+    return json.dumps(records, sort_keys=True)
 
 @app.route('/api/create/<table>', methods=['POST'])
 def insert(table):
     new_record = dict(request.form)
     new_record['_id'] = str(time())
-    success = client.insert(table, [new_record])
-    return json.dumps(success)
+    updated_ids = client.insert(table, [new_record])
+    return json.dumps(updated_ids)
 
 @app.route('/api/update/<table>', methods=['PUT', 'POST'])
 def update(table):
@@ -39,10 +39,12 @@ def delete(table):
 
 
 if __name__ == '__main__':
-    conn_str = sys.argv[1]
-    insert_dummy_data(conn_str)
-
-    client.try_connect(conn_str)
-
-    app.run(debug=True, host='0.0.0.0', port='5001')
-    client.close()
+    conn_str = os.environ.get('MONGODB_URI')
+    if conn_str is None:
+        sys.exit('Cannot find MONGODB_URI env variable.')
+    
+    if client.try_connect(conn_str):
+        app.run(debug=True, host='0.0.0.0', port='5001')
+        client.close()
+    else:
+        print('Database connection failed.\n')

@@ -16,7 +16,9 @@ services:
 
   api:
     build: .
-    image: api:latest
+    image: api:0.0.1
+    environment:
+      - MONGODB_URI=mongodb://admin:admin@db:27017
     networks:
       - app
     ports:
