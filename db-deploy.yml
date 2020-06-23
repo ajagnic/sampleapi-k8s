@@ -4,7 +4,6 @@ metadata:
   name: db
   labels:
     app: api
-    tier: backend
 spec:
   ports:
     - name: db-svc-port
@@ -16,7 +15,7 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: db-deploy
+  name: db
   labels:
     app: api
     tier: backend
@@ -48,13 +47,8 @@ spec:
               containerPort: 27017
           volumeMounts:
             - name: mongo-db
-              mountPath: /data/db
-            - name: mongo-config
-              mountPath: /data/configdb
+              mountPath: /data
       volumes:
         - name: mongo-db
-          persistentVolumeClaim:
-            claimName: mongo-db-pvc
-        - name: mongo-config
           persistentVolumeClaim:
             claimName: mongo-db-pvc
