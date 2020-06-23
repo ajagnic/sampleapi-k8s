@@ -36,7 +36,6 @@ spec:
       containers:
         - name: mongo-ctr
           image: mongo:3.6-xenial
-          imagePullPolicy: IfNotPresent
           env:
             - name: MONGO_INITDB_ROOT_USERNAME
               valueFrom:

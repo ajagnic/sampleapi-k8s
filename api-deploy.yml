@@ -28,7 +28,7 @@ spec:
       tier: frontend
   strategy:
     type: RollingUpdate
-  replicas: 5
+  replicas: 3
   template:
     metadata:
       labels:
@@ -37,8 +37,7 @@ spec:
     spec:
       containers:
         - name: api-ctr
-          image: ajagnic/sample-api:0.0.1
-          imagePullPolicy: IfNotPresent
+          image: ajagnic/sample-api:latest
           env:
             - name: MONGODB_URI
               valueFrom:
