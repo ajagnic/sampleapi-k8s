@@ -2,20 +2,28 @@ from pymongo import MongoClient
 
 
 class MongoDB:
-
+    def __init__(self):
+        self.ok = False
+        self.conn_str = 'mongodb://localhost:27017'
+    
     def try_connect(self, conn_str):
-        self.client = MongoClient(conn_str)
-        db_ok = True
+        if conn_str is not None:
+            self.conn_str = conn_str
+        self.client = MongoClient(self.conn_str)
         try:
             self.client.admin.command('ismaster')
         except:
-            db_ok = False
+            self.ok = False
         else:
+            self.ok = True
             self.db = self.client.app
-        return db_ok
+        return self.ok
 
     def close(self):
-        self.client.close()
+        try:
+            self.client.close()
+        except:
+            pass
     
     def insert(self, table_name, records_list):
         update = self.db[table_name].insert_many(records_list)
