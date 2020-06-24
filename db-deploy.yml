@@ -36,17 +36,24 @@ spec:
       containers:
         - name: mongo-ctr
           image: mongo:3.6-xenial
+          resources:
+            requests:
+              memory: 60Mi
+              cpu: 50m
+            limits:
+              memory: 250Mi
+              cpu: 150m
           env:
             - name: MONGO_INITDB_ROOT_USERNAME
               valueFrom:
                 secretKeyRef:
                   name: api-config
-                  key: username.txt
+                  key: username
             - name: MONGO_INITDB_ROOT_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: api-config
-                  key: password.txt
+                  key: password
           ports:
             - name: mongo-ctr-port
               containerPort: 27017
