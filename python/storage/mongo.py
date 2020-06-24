@@ -4,12 +4,9 @@ from pymongo import MongoClient
 class MongoDB:
     def __init__(self):
         self.ok = False
-        self.conn_str = 'mongodb://localhost:27017'
     
     def try_connect(self, conn_str):
-        if conn_str is not None:
-            self.conn_str = conn_str
-        self.client = MongoClient(self.conn_str)
+        self.client = MongoClient(conn_str)
         try:
             self.client.admin.command('ismaster')
         except:
